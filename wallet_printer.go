@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func PrintPkJsonArray() {
@@ -20,7 +21,7 @@ func PrintPkJsonArray() {
 	}
 	var jsArray []string
 	for _, w := range wallets {
-		jsArray = append(jsArray, w.PrivateKey)
+		jsArray = append(jsArray, strings.TrimPrefix(w.PrivateKey, "0x"))
 	}
 	pkjf, _ := os.Create("pks.json")
 	raw, _ := json.MarshalIndent(jsArray, "", "    ")

@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"encoding/json"
 	"fmt"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+
 	"log"
 	"os"
 )
@@ -16,10 +19,7 @@ type Wallet struct {
 }
 
 func main() {
-	wei, ok := EthToWei("0.2")
-	if ok {
-		fmt.Println("0.2eth=", wei, "wei")
-	}
+	PrintPkJsonArray()
 }
 
 func GenWallet(n int) {
@@ -73,4 +73,10 @@ func genWallet() Wallet {
 	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 	fmt.Println("Address:", address)
 	return Wallet{Address: address, PublicKey: publicKeyHex, PrivateKey: privateKeyHex}
+}
+
+func LastBlock() {
+	client, _ := ethclient.Dial("https://ethereum.publicnode.com")
+	block, _ := client.HeaderByNumber(context.Background(), nil)
+	fmt.Println(block.Number)
 }
