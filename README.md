@@ -8,6 +8,10 @@ EthereumWalletTool
 go build ehtwt.exe/ethwt
 ```
 ## usage
+Command help:
+```shell
+ehtwt.exe --help
+```
 1. Configure the primary wallet key in the `.PK` file.
 2. Generate a specified number of wallets in bulk,and Wallet information will be logged as JSON.
 ```shell

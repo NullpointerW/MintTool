@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"os"
+	"strconv"
 )
 
-var (
-	WallNum int
-	Val     string
-)
+//var (
+//	WallNum int
+//	Val     string
+//)
 
 var ethwt = &cobra.Command{
 	Use:   "ethwt",
@@ -23,16 +24,31 @@ var gen = &cobra.Command{
 	Use:   "gen",
 	Short: "Generate wallet",
 	Run: func(cmd *cobra.Command, args []string) {
-		GenWallet(WallNum)
+		wallNum := 0
+		if len(args) > 0 {
+			var err error
+			wallNum, err = strconv.Atoi(args[0])
+			if err != nil {
+				fmt.Println("generate wallet failed:", err)
+				return
+			}
+		}
+		GenWallet(wallNum)
 	},
+	Args: cobra.MinimumNArgs(1),
 }
 
 var tx = &cobra.Command{
 	Use:   "tx",
 	Short: "Transfer to wallets",
 	Run: func(cmd *cobra.Command, args []string) {
-		Transfer(Val)
+		val := "0"
+		if len(args) > 0 {
+			val = args[0]
+		}
+		Transfer(val)
 	},
+	Args: cobra.MinimumNArgs(1),
 }
 
 var pa = &cobra.Command{
@@ -44,8 +60,8 @@ var pa = &cobra.Command{
 }
 
 func init() {
-	tx.Flags().StringVarP(&Val, "val", "v", "0", "Value amount of ETH for each transfer")
-	gen.Flags().IntVarP(&WallNum, "walletNum", "n", 1, "The number of wallets generated")
+	//tx.Flags().StringVarP(&Val, "val", "v", "0", "Value amount of ETH for each transfer")
+	//gen.Flags().IntVarP(&WallNum, "walletNum", "n", 1, "The number of wallets generated")
 	ethwt.AddCommand(tx, gen, pa)
 }
 
