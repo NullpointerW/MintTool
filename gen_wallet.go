@@ -18,10 +18,6 @@ type Wallet struct {
 	PublicKey  string `json:"publicKey"`
 }
 
-func main() {
-	PrintPkJsonArray()
-}
-
 func GenWallet(n int) {
 	var wallets []Wallet
 	wjr, err := os.ReadFile("wallet.json")

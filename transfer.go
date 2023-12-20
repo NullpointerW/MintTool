@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/ethereum/go-ethereum"
@@ -12,6 +13,8 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
 	"math/big"
+	"os"
+	"strings"
 )
 
 type TxRecord struct {
@@ -19,16 +22,51 @@ type TxRecord struct {
 	Address string `json:"address"`
 	PK      string `json:"PK"`
 	Value   string `json:"value"`
-	GasFee  string `json:"gasFee"`
-	ErrMsg  string `json:"errMsg"`
+	//GasFee  string `json:"gasFee"`
+	ErrMsg string `json:"errMsg"`
 }
 
-func Transfer(mpk string, w Wallet, val string) (TxRecord, error) {
-	client, err := ethclient.Dial("https://ethereum.publicnode.com")
+func Transfer(val string) {
+	ec, err := ethclient.Dial("https://ethereum.publicnode.com")
 	if err != nil {
-		log.Fatalf("Failed to connect to the Ethereum client: %v", err)
+		fmt.Printf("Failed to connect to the Ethereum client: %v", err)
+	}
+	var wallets []Wallet
+	wjr, err := os.ReadFile("wallet.json")
+	if os.IsNotExist(err) {
+		fmt.Println("no wallet found")
+		return
+	} else if err != nil {
+		fmt.Println("load wallet err:", err)
+		return
+	}
+	_ = json.Unmarshal(wjr, &wallets)
+	pkb, err := os.ReadFile(".PK")
+	if err != nil {
+		fmt.Println("load wallet err:", err)
+		return
+	}
+	pk := strings.TrimPrefix(string(pkb), "0x")
+	var txRecords []TxRecord
+	for _, w := range wallets {
+		record, err := transfer(pk, w, val, ec)
+		if err != nil {
+			fmt.Println("transfer err:", err)
+			continue
+		}
+		fmt.Printf("%#+v\n", record)
+		txRecords = append(txRecords, record)
+	}
+	if len(txRecords) > 0 {
+		txjf, _ := os.Create("txRecords.json")
+		raw, _ := json.MarshalIndent(txRecords, "", "    ")
+		_, _ = txjf.Write(raw)
+		_ = txjf.Close()
 	}
 
+}
+
+func transfer(mpk string, w Wallet, val string, ec *ethclient.Client) (TxRecord, error) {
 	privateKeyHex := mpk
 	privateKey, err := crypto.HexToECDSA(privateKeyHex)
 	if err != nil {
@@ -44,7 +82,7 @@ func Transfer(mpk string, w Wallet, val string) (TxRecord, error) {
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 
 	// 获取账户的nonce
-	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
+	nonce, err := ec.PendingNonceAt(context.Background(), fromAddress)
 	if err != nil {
 		log.Fatalf("Failed to get account nonce: %v", err)
 	}
@@ -56,13 +94,13 @@ func Transfer(mpk string, w Wallet, val string) (TxRecord, error) {
 		return TxRecord{}, errors.New(fmt.Sprintf("invalid eth value: %s", val))
 	}
 
-	gasTipCap, err := client.SuggestGasTipCap(context.Background())
+	gasTipCap, err := ec.SuggestGasTipCap(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to suggest gas tip cap: %v", err)
 	}
 
 	// 设置 maxFeePerGas。这通常是 baseFeePerGas + maxPriorityFeePerGas，但要留有余地以适应 baseFee 的变动
-	baseFee, err := client.HeaderByNumber(context.Background(), nil)
+	baseFee, err := ec.HeaderByNumber(context.Background(), nil)
 	if err != nil {
 		log.Fatalf("Failed to get latest block header: %v", err)
 	}
@@ -81,11 +119,11 @@ func Transfer(mpk string, w Wallet, val string) (TxRecord, error) {
 		Data:     nil,
 	}
 
-	estimatedGas, err := client.EstimateGas(context.Background(), msg)
+	estimatedGas, err := ec.EstimateGas(context.Background(), msg)
 	if err != nil {
 		return TxRecord{}, fmt.Errorf("failed to estimate gas: %v", err)
 	}
-
+	fmt.Println("maxPriorityFeePerGas:", gasTipCap, "GasFeeCap:", maxFeePerGas, "Gas:", estimatedGas)
 	tx := &types.DynamicFeeTx{
 		ChainID:   big.NewInt(1),
 		Nonce:     nonce,
@@ -101,7 +139,7 @@ func Transfer(mpk string, w Wallet, val string) (TxRecord, error) {
 	if err != nil {
 		return TxRecord{}, errors.New(fmt.Sprintf("signTx err:%s", err.Error()))
 	}
-	err = client.SendTransaction(context.Background(), signedTx)
+	err = ec.SendTransaction(context.Background(), signedTx)
 	txR := TxRecord{
 		Hash:    signedTx.Hash().String(),
 		Address: w.Address,

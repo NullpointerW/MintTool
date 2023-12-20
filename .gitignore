@@ -1,3 +1,6 @@
 wallet.json
 pks.json
+txRecords.json
 .idea
+.PK
+*.exe

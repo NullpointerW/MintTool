@@ -21,7 +21,9 @@ func PrintPkJsonArray() {
 	}
 	var jsArray []string
 	for _, w := range wallets {
-		jsArray = append(jsArray, strings.TrimPrefix(w.PrivateKey, "0x"))
+		unHexPrefix := strings.TrimPrefix(w.PrivateKey, "0x")
+		fmt.Println(unHexPrefix)
+		jsArray = append(jsArray, unHexPrefix)
 	}
 	pkjf, _ := os.Create("pks.json")
 	raw, _ := json.MarshalIndent(jsArray, "", "    ")
