@@ -19,5 +19,5 @@ ehtwt.exe gen {num}
 ```
 3. Use the main wallet to batch transfer a specified amount of eth to all wallets in wallet.json,and txRecord record will be logged as JSON.
 ```shell
-ehtwt.exe gen {value}
+ehtwt.exe tx {value}
 ```
