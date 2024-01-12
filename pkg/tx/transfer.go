@@ -95,10 +95,10 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 	if err != nil {
 		return common.Hash{}, err
 	}
-	fmt.Println("signedTx.Hash()", signedTx.Hash().String())
-	fmt.Println("txn.Hash()", txn.Hash().String())
+	//fmt.Println("signedTx.Hash()", signedTx.Hash().String())
+	//fmt.Println("txn.Hash()", txn.Hash().String())
 	err = ec.SendTransaction(context.Background(), signedTx)
-	return txn.Hash(), err
+	return signedTx.Hash(), err
 }
 func WaitForTransactionConfirmation(client *ethclient.Client, txHash common.Hash) (*types.Receipt, error) {
 	var receipt *types.Receipt
