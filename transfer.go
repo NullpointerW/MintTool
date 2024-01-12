@@ -74,14 +74,14 @@ func transfer(mpk string, w Wallet, val string, ec *ethclient.Client) TxRecord {
 	if err != nil {
 		txR.ErrMsg = err.Error()
 	} else {
-		_, err = waitForTransactionConfirmation(ec, txHash)
+		_, err = WaitForTransactionConfirmation(ec, txHash)
 		if err != nil {
 			txR.ErrMsg = err.Error()
 		}
 	}
 	return txR
 }
-func waitForTransactionConfirmation(client *ethclient.Client, txHash common.Hash) (*types.Receipt, error) {
+func WaitForTransactionConfirmation(client *ethclient.Client, txHash common.Hash) (*types.Receipt, error) {
 	var receipt *types.Receipt
 	var err error
 
