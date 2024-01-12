@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"log"
 	"math/big"
+	"time"
 )
 
 func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Client) (txHash common.Hash, err error) {
@@ -96,4 +97,33 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 	}
 	err = ec.SendTransaction(context.Background(), signedTx)
 	return txn.Hash(), err
+}
+func WaitForTransactionConfirmation(client *ethclient.Client, txHash common.Hash) (*types.Receipt, error) {
+	var receipt *types.Receipt
+	var err error
+
+	// 设置查询上下文，可以设置超时
+	ctx := context.Background()
+
+	// 设置轮询间隔
+
+	fmt.Println("waiting for tx confirmed")
+	for {
+		receipt, err = client.TransactionReceipt(ctx, txHash)
+		if err != nil {
+			if err == ethereum.NotFound {
+				// 如果收据未找到，继续轮询
+				time.Sleep(time.Second)
+				continue
+			}
+			// 如果发生其他错误，则返回错误
+			return nil, err
+		}
+		// 如果收据不为空，表示交易已被确认
+		if receipt != nil {
+			break
+		}
+	}
+
+	return receipt, nil
 }
