@@ -7,10 +7,9 @@ import (
 	"strconv"
 )
 
-//var (
-//	WallNum int
-//	Val     string
-//)
+var (
+	Endpoint string
+)
 
 var ethwt = &cobra.Command{
 	Use:   "ethwt",
@@ -60,8 +59,7 @@ var pa = &cobra.Command{
 }
 
 func init() {
-	//tx.Flags().StringVarP(&Val, "val", "v", "0", "Value amount of ETH for each transfer")
-	//gen.Flags().IntVarP(&WallNum, "walletNum", "n", 1, "The number of wallets generated")
+	tx.Flags().StringVarP(&Endpoint, "endpoint", "edp", "https://ethereum.publicnode.com", "Network rpc endpoint")
 	ethwt.AddCommand(tx, gen, pa)
 }
 

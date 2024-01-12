@@ -72,8 +72,12 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 		return "", err
 	}
 	fmt.Println("maxPriorityFeePerGas:", gasTipCap, "GasFeeCap:", maxFeePerGas, "Gas:", estimatedGas)
+	cid, err := ec.ChainID(context.Background())
+	if err != nil {
+		return "", fmt.Errorf("get chainID error:%w", err)
+	}
 	tx := &types.DynamicFeeTx{
-		ChainID:   big.NewInt(1),
+		ChainID:   cid,
 		Nonce:     nonce,
 		GasTipCap: gasTipCap,    // maxPriorityFeePerGas
 		GasFeeCap: maxFeePerGas, // max Fee

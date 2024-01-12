@@ -19,7 +19,7 @@ type TxRecord struct {
 }
 
 func Transfer(val string) {
-	ec, err := ethclient.Dial("https://ethereum.publicnode.com")
+	ec, err := ethclient.Dial(Endpoint)
 	if err != nil {
 		fmt.Printf("Failed to connect to the Ethereum client: %v", err)
 	}

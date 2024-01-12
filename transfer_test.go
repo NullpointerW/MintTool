@@ -3,5 +3,5 @@ package main
 import "testing"
 
 func TestTransfer(t *testing.T) {
-	Transfer("0.0001")
+	Transfer("0.002")
 }
