@@ -2,8 +2,8 @@ package main
 
 import (
 	"encoding/json"
-	_tx "ethereum-wallet-tool/pkg/tx"
 	"fmt"
+	_tx "github.com/NullpointerW/ethereum-wallet-tool/pkg/tx"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"os"
 	"strings"

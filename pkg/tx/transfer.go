@@ -3,8 +3,8 @@ package tx
 import (
 	"context"
 	"crypto/ecdsa"
-	"ethereum-wallet-tool/pkg/util"
 	"fmt"
+	"github.com/NullpointerW/ethereum-wallet-tool/pkg/util"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
