@@ -64,7 +64,7 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 		Gas:      0,
 		GasPrice: maxFeePerGas,
 		Value:    wei,
-		Data:     nil,
+		Data:     data,
 	}
 
 	estimatedGas, err := ec.EstimateGas(context.Background(), msg)
