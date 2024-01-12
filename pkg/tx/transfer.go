@@ -14,7 +14,7 @@ import (
 	"math/big"
 )
 
-func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Client) (txHash string, err error) {
+func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Client) (txHash common.Hash, err error) {
 	privateKeyHex := pk
 	privateKey, err := crypto.HexToECDSA(privateKeyHex)
 	if err != nil {
@@ -39,7 +39,7 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 	wei, ok := util.ToWei(val)
 	if !ok {
 		fmt.Println("invalid eth value:", val)
-		return "", err
+		return common.Hash{}, err
 	}
 
 	gasTipCap, err := ec.SuggestGasTipCap(context.Background())
@@ -69,12 +69,12 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 
 	estimatedGas, err := ec.EstimateGas(context.Background(), msg)
 	if err != nil {
-		return "", err
+		return common.Hash{}, err
 	}
 	fmt.Println("maxPriorityFeePerGas:", gasTipCap, "GasFeeCap:", maxFeePerGas, "Gas:", estimatedGas)
 	cid, err := ec.ChainID(context.Background())
 	if err != nil {
-		return "", fmt.Errorf("get chainID error:%w", err)
+		return common.Hash{}, fmt.Errorf("get chainID error:%w", err)
 	}
 	tx := &types.DynamicFeeTx{
 		ChainID:   cid,
@@ -92,8 +92,8 @@ func Transfer(pk string, to string, val string, data []byte, ec *ethclient.Clien
 	// 创建交易
 	signedTx, err := types.SignTx(txn, types.NewCancunSigner(tx.ChainID), privateKey)
 	if err != nil {
-		return "", err
+		return common.Hash{}, err
 	}
 	err = ec.SendTransaction(context.Background(), signedTx)
-	return txn.Hash().String(), err
+	return txn.Hash(), err
 }

@@ -59,7 +59,7 @@ var pa = &cobra.Command{
 }
 
 func init() {
-	tx.Flags().StringVarP(&Endpoint, "endpoint", "edp", "https://ethereum.publicnode.com", "Network rpc endpoint")
+	tx.Flags().StringVarP(&Endpoint, "endpoint", "e", "https://ethereum.publicnode.com", "Network rpc endpoint")
 	ethwt.AddCommand(tx, gen, pa)
 }
 
