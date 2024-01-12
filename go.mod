@@ -1,4 +1,4 @@
-module MintTool
+module ethereum-wallet-tool
 
 go 1.21
 
