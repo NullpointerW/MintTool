@@ -1,4 +1,4 @@
-EthereumWalletTool
+ethereum-wallet-tool
 -----------------------
 ## function
 * Bulk Wallet Generation
