@@ -1,4 +1,4 @@
-module ethereum-wallet-tool
+module github.com/NullpointerW/ethereum-wallet-tool
 
 go 1.21
 
