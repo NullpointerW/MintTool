@@ -109,12 +109,11 @@ func WaitForTransactionConfirmation(client *ethclient.Client, txHash common.Hash
 
 	// 设置轮询间隔
 
-	fmt.Println("waiting for tx confirmed")
 	for {
 		receipt, err = client.TransactionReceipt(ctx, txHash)
 		if err != nil {
 			if err == ethereum.NotFound {
-				// 如果收据未找到，继续轮询
+				fmt.Println("waiting for confirmed tx:", txHash.String())
 				time.Sleep(time.Second)
 				continue
 			}
