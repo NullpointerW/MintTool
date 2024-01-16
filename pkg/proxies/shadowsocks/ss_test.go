@@ -78,3 +78,14 @@ func TestSS(t *testing.T) {
 	}
 	fmt.Println(string(b))
 }
+
+func TestProxiesYaml_Load(t *testing.T) {
+	cfg := new(ProxiesYaml)
+	err := cfg.Load("ss.yaml")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	outbounds := cfg.CovertOption()
+	fmt.Println(outbounds)
+}

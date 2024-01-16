@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestSS(t *testing.T) {
+func TestVmess(t *testing.T) {
 	dialer := NewDialer(proxies.StringResolver, []outbound.VmessOption{{
 		Name:   "vmess",
 		Server: "sever_host",

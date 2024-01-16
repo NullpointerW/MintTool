@@ -24,6 +24,19 @@ func NewDialer(addrResolver proxies.AddrResolver, nodes ...outbound.VmessOption)
 	dl.addrResolver = addrResolver
 	return dl
 }
+func NewDialerWithCfg(addrResolver proxies.AddrResolver, config string) (*Dialer, error) {
+	cfg := new(ProxiesYaml)
+	err := cfg.Load(config)
+	if err != nil {
+		return nil, err
+	}
+	nodes := cfg.CovertOption()
+	dl := new(Dialer)
+	dl.nodes = nodes
+	dl.nl = len(nodes)
+	dl.addrResolver = addrResolver
+	return dl, nil
+}
 
 func (dialer *Dialer) NewConn(_ context.Context, network, addr string) (net.Conn, error) {
 	rand.Seed(uint64(time.Now().UnixNano()))
