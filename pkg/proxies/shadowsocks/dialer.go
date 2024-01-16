@@ -25,10 +25,10 @@ func NewDialer(addrResolver proxies.AddrResolver, nodes ...outbound.ShadowSocksO
 	return dl
 }
 
-func (dialer *Dialer) NewConn(ctx context.Context, network, addr string) (net.Conn, error) {
+func (dialer *Dialer) NewConn(_ context.Context, network, addr string) (net.Conn, error) {
 	rand.Seed(uint64(time.Now().UnixNano()))
-	r := rand.Int() % len(dialer.nodes)
-	fmt.Println("use node::", r)
+	r := rand.Intn(len(dialer.nodes))
+	fmt.Println("ss: use node::", r)
 	proxy, err := outbound.NewShadowSocks(dialer.nodes[r])
 	if err != nil {
 		return nil, err
