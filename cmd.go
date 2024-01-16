@@ -57,10 +57,17 @@ var pa = &cobra.Command{
 		PrintPkJsonArray()
 	},
 }
+var pl = &cobra.Command{
+	Use:   "pl",
+	Short: "Print private key as line txt",
+	Run: func(cmd *cobra.Command, args []string) {
+		PrintPkLine()
+	},
+}
 
 func init() {
 	tx.Flags().StringVarP(&Endpoint, "endpoint", "e", "https://ethereum.publicnode.com", "Network rpc endpoint")
-	ethwt.AddCommand(tx, gen, pa)
+	ethwt.AddCommand(tx, gen, pa, pl)
 }
 
 func main() {
